@@ -1,0 +1,15 @@
+server:
+  port: 18009
+spring:
+  application:
+    name: MK-Gatway
+  cloud:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    org:
+      springframework:
+        boot: info
+    com.mk.*: debug
