@@ -6,12 +6,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.ForwardRoutingFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -28,10 +31,13 @@ public class DefaultGlobalFilter implements GlobalFilter, Ordered
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultGlobalFilter.class);
 
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
     {
         LOGGER.info("全局filter...");
+        LOGGER.info("请求的path:{}", exchange.getRequest().getPath());
+
         ServerHttpResponse response = exchange.getResponse();
         JSONObject message = new JSONObject();
         try {

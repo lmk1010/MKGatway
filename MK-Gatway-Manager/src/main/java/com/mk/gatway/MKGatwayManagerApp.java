@@ -1,10 +1,8 @@
 package com.mk.gatway;
 
-import com.mk.gatway.router.filter.config.CustomGlobalFilterConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.context.annotation.Bean;
+
 
 /**
  * @Author liumingkang

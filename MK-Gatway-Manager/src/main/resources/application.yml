@@ -6,6 +6,9 @@ spring:
   cloud:
     gateway:
       enabled: true
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 5s
 
 logging:
   level:
