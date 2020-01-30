@@ -16,9 +16,13 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 /**
  * @Author liumingkang
@@ -38,18 +42,25 @@ public class DefaultGlobalFilter implements GlobalFilter, Ordered
         LOGGER.info("全局filter...");
         LOGGER.info("请求的path:{}", exchange.getRequest().getPath());
 
-        ServerHttpResponse response = exchange.getResponse();
-        JSONObject message = new JSONObject();
-        try {
-            message.put("result", "success");
-            message.put("status", "200");
-            byte[] bits = message.toString().getBytes(StandardCharsets.UTF_8);
-            DataBuffer buffer = response.bufferFactory().wrap(bits);
-            return response.writeWith(Mono.just(buffer));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return chain.filter(exchange);
+        Object uriObj = exchange.getAttributes().get(GATEWAY_REQUEST_URL_ATTR);
+        if (uriObj != null) {
+            URI uri = (URI) uriObj;
+            uri = this.upgradeConnection(uri, "http");
+            exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, uri);
         }
+        return chain.filter(exchange);
+
+    }
+
+    private URI upgradeConnection(URI uri, String scheme) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUri(uri).scheme(scheme);
+        if (uri.getRawQuery() != null) {
+            // When building the URI, UriComponentsBuilder verify the allowed characters and does not
+            // support the '+' so we replace it for its equivalent '%20'.
+            // See issue https://jira.spring.io/browse/SPR-10172
+            uriComponentsBuilder.replaceQuery(uri.getRawQuery().replace("+", "%20"));
+        }
+        return uriComponentsBuilder.build(true).toUri();
     }
 
     @Override

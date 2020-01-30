@@ -24,13 +24,12 @@ public class MKRouter
     private static final Logger LOGGER = LoggerFactory.getLogger(MKRouter.class);
 
     @Bean
-    public RouteLocator defaultRouterLocater(RouteLocatorBuilder locatorBuilder)
+    public RouteLocator customRouteLocator(RouteLocatorBuilder locatorBuilder)
     {
-
-        LOGGER.info("来到了router！");
+        /** spring启动一开始routes就会加载到内存里 */
+        LOGGER.info("走到了router！");
         return locatorBuilder.routes()
-                .route(p -> p.path("/api/car/**").uri("http://localhost:18009/test/hello"))
-                .route(p -> p.path("/api/life/**").uri("http://localhost:18009/test"))
+                .route("test_route", p -> p.path("/get").uri("http://127.0.0.1:18007/auth"))
                 .build();
     }
 
