@@ -21,7 +21,6 @@ public class TestController
     @RequestMapping(value = "hello", method = RequestMethod.GET)
     public String toHello()
     {
-        LOGGER.info("来到了controller了");
         return "hello";
     }
 }

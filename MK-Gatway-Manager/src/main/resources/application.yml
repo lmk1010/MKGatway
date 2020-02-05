@@ -9,15 +9,19 @@ spring:
         server-addr: 127.0.0.1
         enabled: true
     gateway:
-      routes:
-        - id: dev
-          uri: http://localhost:18007/auth
-          predicates:
-            - After=2018-05-20T17:42:47.789-07:00[America/Denver]
       enabled: true
       httpclient:
         connect-timeout: 1000
         response-timeout: 5s
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: host_route
+          uri: http://www.baidu.com
+          predicates:
+          - Query=chid,wx
+          - Path=/baidu/*
 
 logging:
   level:
